@@ -32,23 +32,30 @@ time.sleep(3)
 browser.find_element(By.XPATH, "//input[@name='search']").send_keys(Keys.ENTER)
 time.sleep(3)
 # browser.get_screenshot_as_file("screenshot5.png")
-today = browser.find_elements(By.XPATH, "//span[contains(text(), 'Available Today')]")
-tmr = browser.find_elements(By.XPATH, "//span[contains(text(), 'Available Tomorrow')]")
+today = browser.find_elements(By.XPATH, "//div[contains(@class, 'rf-productlocator-main')]//span[contains(text(), 'Available Today')]")
+tmr = browser.find_elements(By.XPATH, "//div[contains(@class, 'rf-productlocator-main')]//span[contains(text(), 'Available Tomorrow')]")
+suggestToday = browser.find_elements(By.XPATH, "//div[contains(@class, 'rf-productlocator-suggestions')]//span[contains(text(), 'Available Today')]")
+suggestTmr = browser.find_elements(By.XPATH, "//div[contains(@class, 'rf-productlocator-suggestions')]//span[contains(text(), 'Available Tomorrow')]")
 browser.close()
 
 print(len(today) > 0)
 print(len(tmr) > 0)
+print(len(suggestToday) > 0)
+print(len(suggestTmr) > 0)
 
 phoneNumber = 'ENTER YOUR PHONE NUMBER HERE'
 email = 'ENTER_EMAIL_HERE'
 password = 'ENTER_PASSWORD_HERE'
 
-if len(today) > 0 or len(tmr) > 0:
+if len(today) > 0 or len(tmr) > 0 or len(suggestToday) > 0 or len(suggestTmr) > 0:
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(email, password)
-        server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'iPhone Available!' )
+        if len(today) > 0 or len(tmr) > 0:
+            server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'iPhone Available!')
+        else:
+            server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'Suggestion Available!')
         server.close()
         print("Successfully sent email")
     except SMTPException:
@@ -58,7 +65,7 @@ else:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(email, password)
-        server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'No iPhone :(' )
+        server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'No iPhone :(')
         server.close()
         print("Successfully sent email")
     except SMTPException:
