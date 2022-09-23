@@ -1,3 +1,4 @@
+#!/home/harin/Desktop/Inventory/env/bin/python
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -43,30 +44,25 @@ print(len(tmr) > 0)
 print(len(suggestToday) > 0)
 print(len(suggestTmr) > 0)
 
-phoneNumber = 'ENTER YOUR PHONE NUMBER HERE'
-email = 'ENTER_EMAIL_HERE'
-password = 'ENTER_PASSWORD_HERE'
+phoneNumber = 'PHONE'
+email = 'EMAIL'
+password = 'PASSWORD'
 
+text = '\nNo iPhone :('
 if len(today) > 0 or len(tmr) > 0 or len(suggestToday) > 0 or len(suggestTmr) > 0:
-    try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.ehlo()
-        server.login(email, password)
-        if len(today) > 0 or len(tmr) > 0:
-            server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'iPhone Available!')
-        else:
-            server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'Suggestion Available!')
-        server.close()
-        print("Successfully sent email")
-    except SMTPException:
-        print("Error: unable to send email")
-else:
-    try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.ehlo()
-        server.login(email, password)
-        server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', 'No iPhone :(')
-        server.close()
-        print("Successfully sent email")
-    except SMTPException:
-        print("Error: unable to send email")
+    if len(today) > 0 or len(tmr) > 0:
+        text = '\niPhone Available!'
+    else:
+        text = '\nSuggestion Available!'
+
+print(text)
+
+try:
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(email, password)
+    server.sendmail(email, phoneNumber + '@txt.freedommobile.ca', text)
+    server.close()
+    print("Successfully sent email")
+except SMTPException:
+    print("Error: unable to send email")
